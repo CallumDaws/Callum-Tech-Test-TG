@@ -1,0 +1,28 @@
+﻿@model IEnumerable<Callum_Tech_Test_TG.Models.Customer>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Post code</th>
+            <th>Height (Meters)</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var customer in Model)
+        {
+            <tr>
+                <td>@customer.Name</td>
+                <td>@customer.Age</td>
+                <td>@customer.PostCode</td>
+                <td>@customer.Height</td>
+                <td>
+                    <!-- Trigger Edit functionality without showing ID -->
+                    <button type="button" class="btn btn-primary btn-edit-customer" data-id="@customer.Id">Edit</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

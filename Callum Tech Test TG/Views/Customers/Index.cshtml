@@ -1,0 +1,77 @@
+﻿@model IEnumerable<Callum_Tech_Test_TG.Models.Customer>
+
+<h2>Customers List</h2>
+
+<!-- Button to trigger add/edit modal -->
+<button type="button" class="btn btn-primary" id="addCustomerButton">Add Customer</button>
+
+<!-- Customer Grid -->
+<div id="customerGrid">
+    @Html.Partial("_CustomerGrid", Model)
+</div>
+
+<!-- Add/Edit Customer Modal -->
+<div class="modal fade" id="addEditCustomerModal" tabindex="-1" role="dialog" aria-labelledby="addEditCustomerModalLabel" aria-hidden="true">
+    @Html.Partial("_AddEditCustomerModal", new Customer())
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Handle "Add Customer" button click
+            $('#addCustomerButton').click(function () {
+                $('#addEditCustomerForm')[0].reset(); // Reset the form
+                $('#addEditCustomerForm').find('#Id').val('0');
+                $('#addEditCustomerModal').modal('show');
+            });
+
+            // Delegate event handler for edit buttons to ensure it works for dynamically loaded content
+            $(document).on('click', '.btn-edit-customer', function () {
+                var customerId = $(this).data('id');
+                fetchCustomerData(customerId); // Fetch and populate data for editing
+            });
+
+            // Form submission with AJAX
+            $('#addEditCustomerForm').submit(function (event) {
+                event.preventDefault();
+                var form = $(this);
+                if (!form.valid()) return;
+
+                $.ajax({
+                    type: "POST",
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function (response) {
+                        $('#customerGrid').html(response);
+                        $('#addEditCustomerModal').modal('hide');
+                    },
+                    error: function () {
+                        alert("An error occurred, please try again.");
+                    }
+                });
+            });
+        });
+
+        // Function to fetch customer data and populate the form for editing
+        function fetchCustomerData(customerId) {
+            $.ajax({
+                url: '/Customers/GetCustomerById',
+                data: { id: customerId },
+                success: function (data) {
+                    // Populate form fields with the fetched customer data
+                    $('#Id').val(data.id);
+                    $('#Name').val(data.name);
+                    $('#Age').val(data.age);
+                    $('#PostCode').val(data.postCode);
+                    $('#Height').val(data.height);
+                    $('#addEditCustomerModal').modal('show');
+                },
+                error: function () {
+                    alert('Failed to retrieve customer data.');
+                }
+            });
+        }
+
+</script>
+}
+
